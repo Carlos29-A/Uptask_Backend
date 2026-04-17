@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { ProjectController } from '../controllers/ProjectController';
 import { handleInputErrors } from '../middleware';
+import { TaskController } from '../controllers/TaskController';
 
 
 // definimos las rutas de los proyectos
@@ -45,6 +46,16 @@ router.delete('/:id',
     ProjectController.deleteProjectById
 );
 
+
+
+
+
+
+// rutas para las tareas
+router.post('/:projectId/tasks',
+
+    TaskController.createTask
+)
 
 
 // exportamos las rutas
