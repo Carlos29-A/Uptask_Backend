@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, PopulatedDoc } from 'mongoose';
+import { TaskType } from './Task';
 
 
 // para que typescript sepa que tipo de datos es el proyecto
@@ -6,6 +7,7 @@ export type ProjectType = Document & {
     projectName: string;
     clientName: string;
     description: string;
+    tasks: PopulatedDoc<TaskType & Document>[];
 }
 
 // de mongo schema, es el esquema de la base de datos
@@ -24,7 +26,13 @@ const ProjectSchema = new Schema<ProjectType>({
         type: String,
         required: true,
         trim: true,
-    }
+    },
+    tasks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Task',
+    }]
+}, {
+    timestamps: true,
 })
 
 // definimos el modelo de proyecto, que se va a guardar en la base de datos
