@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { ProjectController } from '../controllers/ProjectController';
-import { handleInputErrors } from '../middleware';
+import { handleInputErrors, projectExists } from '../middleware';
 import { TaskController } from '../controllers/TaskController';
 
 
@@ -53,7 +53,7 @@ router.delete('/:id',
 
 // rutas para las tareas
 router.post('/:projectId/tasks',
-
+    projectExists,
     TaskController.createTask
 )
 

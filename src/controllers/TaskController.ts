@@ -6,22 +6,13 @@ import Task from '../models/Task';
 export class TaskController {
     // Crear una tarea
     static createTask = async (req: Request, res: Response) => {
-        // Obtenemos el ID del proyecto
-        const { projectId } = req.params;
-        const project = await Project.findById(projectId);
-
-        if (!project) {
-            return res.status(404).json({ message: 'Proyecto no encontrado' });
-        }
-
         try {
-
+            const project = req.project;
             // Creamos la tarea
             const task = new Task(req.body);
             task.project = project._id;
             project.tasks.push(task._id);
-            await task.save();
-            await project.save();
+            await Promise.allSettled([task.save(), project.save()]);
             res.send('Tarea creada correctamente');
         } catch (error) {
             console.log(error);
