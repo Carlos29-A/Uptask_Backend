@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 import { ProjectController } from '../controllers/ProjectController';
 import { handleInputErrors } from '../middleware';
 
@@ -19,6 +19,33 @@ router.post('/',
     ProjectController.createProject
 );
 router.get('/', ProjectController.getAllProjects);
+router.get('/:id',
+    param('id')
+        .isMongoId().withMessage('El ID no es válido'),
+    handleInputErrors,
+    ProjectController.getProjectById);
+
+router.put('/:id',
+    param('id')
+        .isMongoId().withMessage('El ID no es válido'),
+    body('projectName')
+        .notEmpty().withMessage('El nombre del proyecto es obligatorio'),
+    body('clientName')
+        .notEmpty().withMessage('El nombre del cliente es obligatorio'),
+    body('description')
+        .notEmpty().withMessage('La descripción es obligatoria'),
+    handleInputErrors,
+    ProjectController.updateProjectById
+);
+
+router.delete('/:id',
+    param('id')
+        .isMongoId().withMessage('El ID no es válido'),
+    handleInputErrors,
+    ProjectController.deleteProjectById
+);
+
+
 
 // exportamos las rutas
 export default router;
