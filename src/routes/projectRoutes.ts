@@ -54,9 +54,18 @@ router.delete('/:id',
 // rutas para las tareas
 router.post('/:projectId/tasks',
     projectExists,
+    body('name')
+        .notEmpty().withMessage('El nombre de la tarea es obligatorio'),
+    body('description')
+        .notEmpty().withMessage('La descripción de la tarea es obligatoria'),
+    handleInputErrors,
     TaskController.createTask
 )
-
+// Obtener todas las tareas de un proyecto
+router.get('/:projectId/tasks',
+    projectExists,
+    TaskController.getAllTasks
+)
 
 // exportamos las rutas
 export default router;
