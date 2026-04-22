@@ -19,6 +19,7 @@ router.post('/',
     handleInputErrors,
     ProjectController.createProject
 );
+
 router.get('/', ProjectController.getAllProjects);
 router.get('/:id',
     param('id')
@@ -84,6 +85,14 @@ router.put('/:projectId/tasks/:taskId',
         .notEmpty().withMessage('La descripción de la tarea es obligatoria'),
     handleInputErrors,
     TaskController.updateTaskById
+)
+
+// Eliminar una tarea por su ID
+router.delete('/:projectId/tasks/:taskId',
+    param('taskId')
+        .isMongoId().withMessage('El ID de la tarea no es válido'),
+    handleInputErrors,
+    TaskController.deleteTaskById
 )
 
 

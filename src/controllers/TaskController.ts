@@ -55,18 +55,52 @@ export class TaskController {
     static updateTaskById = async (req: Request, res: Response) => {
         try {
             const { taskId } = req.params;
-            const task = await Task.findByIdAndUpdate(taskId, req.body, { new: true }).populate('project');
+            const task = await Task.findById(taskId).populate('project');
             if (!task) {
-                return res.status(404).json({ message: 'Tarea no encontrada' });
+                const error = new Error('Tarea no encontrada');
+                return res.status(404).json({ message: error.message });
             }
             // Verificar si la tarea su proyecto es el mismo del proyecto que se está solicitando
             if (task.project.toString() !== req.project._id.toString()) {
-                return res.status(403).json({ message: 'La tarea no pertenece al proyecto solicitado' });
+                const error = new Error('La tarea no pertenece al proyecto solicitado');
+                return res.status(403).json({ message: error.message });
             }
-            res.status(200).json(task);
+            // Actualizamos la tarea
+            task.name = req.body.name;
+            task.description = req.body.description;
+            await task.save();
+            res.status(200).send('Tarea actualizada correctamente');
         } catch (error) {
             console.log(error);
             res.status(500).json({ message: 'Error al actualizar la tarea' });
+        }
+    }
+
+    // Eliminar una tarea por su ID
+    static deleteTaskById = async (req: Request, res: Response) => {
+
+        try {
+            const { taskId } = req.params;
+            const task = await Task.findById(taskId);
+
+            if (!task) {
+                const error = new Error('Tarea no encontrada');
+                return res.status(404).json({ message: error.message });
+            }
+            // Verificar si la tarea su proyecto es el mismo del proyecto que se está solicitando
+            if (task.project.toString() !== req.project._id.toString()) {
+                const error = new Error('La tarea no pertenece al proyecto solicitado');
+                return res.status(403).json({ message: error.message });
+            }
+            // Eliminamos la tarea del proyecto
+            req.project.tasks = req.project.tasks.filter(task => task.toString() !== taskId);
+            // Eliminamos la tarea y actualizamos el proyecto
+            await Promise.allSettled([task.deleteOne(), req.project.save()]);
+
+            res.status(200).send('Tarea eliminada correctamente');
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Error al eliminar la tarea' });
         }
     }
 }
