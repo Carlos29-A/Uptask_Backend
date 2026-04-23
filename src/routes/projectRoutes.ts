@@ -3,6 +3,7 @@ import { body, param } from 'express-validator';
 import { ProjectController } from '../controllers/ProjectController';
 import { handleInputErrors, projectExists } from '../middleware';
 import { TaskController } from '../controllers/TaskController';
+import { taskBelongsToProject, taskExists } from '../middleware/task';
 
 
 // definimos las rutas de los proyectos
@@ -67,6 +68,11 @@ router.post('/:projectId/tasks',
 router.get('/:projectId/tasks',
     TaskController.getAllTasks
 )
+
+// Middleware para verificar si la tarea existe
+router.param('taskId', taskExists);
+router.param('taskId', taskBelongsToProject);
+
 // Obtener una tarea por su ID
 router.get('/:projectId/tasks/:taskId',
     param('taskId')
