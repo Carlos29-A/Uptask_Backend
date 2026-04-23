@@ -103,4 +103,31 @@ export class TaskController {
             res.status(500).json({ message: 'Error al eliminar la tarea' });
         }
     }
+    // Actualizar el estado de una tarea por su ID
+    static updateTaskStatusById = async (req: Request, res: Response) => {
+        try {
+            const { taskId } = req.params;
+            const task = await Task.findById(taskId);
+
+            if (!task) {
+                const error = new Error('Tarea no encontrada');
+                return res.status(404).json({ message: error.message });
+            }
+            // Verificar si la tarea su proyecto es el mismo del proyecto que se está solicitando
+            if (task.project.toString() !== req.project._id.toString()) {
+                const error = new Error('La tarea no pertenece al proyecto solicitado');
+                return res.status(403).json({ message: error.message });
+            }
+
+            // Actualizamos el estado de la tarea
+            const { status } = req.body;
+            task.status = status;
+            await task.save();
+            res.status(200).send('Estado de la tarea actualizado correctamente');
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Error al actualizar el estado de la tarea' });
+        }
+    }
 }

@@ -1,0 +1,21 @@
+# UpTask API — usa el enlace "Send Request" que aparece encima de cada petición
+# (o paleta: "Rest Client: Send Request"). La respuesta se abre en un panel a la derecha.
+@baseUrl = http://127.0.0.1:4000
+@projectId = 69e2c4e34e0143903590e438
+@taskId = 69e2c7110de37856434c62bc
+
+### Listar todos los proyectos (debe devolver JSON)
+GET {{baseUrl}}/api/projects
+
+### Tareas de un proyecto
+GET {{baseUrl}}/api/projects/{{projectId}}/tasks
+
+### Cambiar el estado de una tarea
+POST {{baseUrl}}/api/projects/{{projectId}}/tasks/{{taskId}}/status
+Content-Type: application/json
+
+{
+  "status": "inProgress"
+}
+
+###
