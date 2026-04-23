@@ -1,5 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
+import { corsConfig } from './config/cors';
 import { connectDB } from './config/db';
 import projectRoutes from './routes/projectRoutes';
 
@@ -10,6 +12,9 @@ dotenv.config();
 connectDB();
 // Creamos nuestra aplicación de express
 const app = express();
+
+// Habilitamos el uso de CORS
+app.use(cors(corsConfig));
 
 // Habilitamos el uso de JSON en el body de las peticiones
 app.use(express.json());
