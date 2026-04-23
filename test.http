@@ -18,4 +18,13 @@ Content-Type: application/json
   "status": "inProgress"
 }
 
-###
+### Autenticación
+POST {{baseUrl}}/api/auth/create-account
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "123456",
+  "name": "Test User",
+  "confirmPassword": "123456"
+}

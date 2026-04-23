@@ -1,0 +1,7 @@
+{
+  "rest-client.previewColumn": "beside",
+  "rest-client.previewResponsePanelTakeFocus": true,
+  "rest-client.showResponseInDifferentTab": true,
+  "rest-client.previewResponseInUntitledDocument": true,
+  "workbench.editor.openSideBySideDirection": "right"
+}
