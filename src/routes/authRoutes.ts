@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import { body, param } from "express-validator";
 import { handleInputErrors } from "../middleware";
+import { authenticate } from "../middleware/auth";
 
 
 // definimos las rutas de autenticación
@@ -72,5 +73,10 @@ router.post('/update-password/:token',
         .custom((value, { req }) => value === req.body.password).withMessage('Las contraseñas no coinciden'),
     handleInputErrors,
     AuthController.updatePassword
+)
+
+router.get('/user',
+    authenticate,
+    AuthController.user
 )
 export default router;
