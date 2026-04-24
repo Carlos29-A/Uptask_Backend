@@ -72,6 +72,5 @@ router.post('/update-password/:token',
         .custom((value, { req }) => value === req.body.password).withMessage('Las contraseñas no coinciden'),
     handleInputErrors,
     AuthController.updatePassword
-
 )
 export default router;

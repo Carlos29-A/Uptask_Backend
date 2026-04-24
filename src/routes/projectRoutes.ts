@@ -3,6 +3,7 @@ import { body, param } from 'express-validator';
 import { ProjectController } from '../controllers/ProjectController';
 import { handleInputErrors, projectExists, taskBelongsToProject, taskExists } from '../middleware';
 import { TaskController } from '../controllers/TaskController';
+import { authenticate } from '../middleware/auth';
 
 
 // definimos las rutas de los proyectos
@@ -10,6 +11,7 @@ const router = Router();
 
 
 router.post('/',
+    authenticate,
     body('projectName')
         .notEmpty().withMessage('El nombre del proyecto es obligatorio'),
     body('clientName')
