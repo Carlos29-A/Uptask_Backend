@@ -86,12 +86,38 @@ export class AuthController {
                 return res.status(401).json({ message: 'La contraseña es incorrecta' });
             }
 
-            res.send('Autenticado correctamente');
+            return res.status(200).json({ message: 'Autenticado correctamente' });
 
 
         } catch (error) {
             console.log(error);
             res.status(500).json({ message: 'Error al iniciar sesión' });
+        }
+    }
+
+    static requestConfirmationCode = async (req: Request, res: Response) => {
+        try {
+
+            const { email } = req.body;
+
+            // Usuario existe
+            const user = await User.findOne({ email });
+            if (!user) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+            // Generar token
+            const token = new Token()
+            token.token = generateToken();
+            token.user = user._id;
+            // Enviar email de confirmación
+            await AuthEmail.sendConfirmationEmail({ email, name: user.name, token: token.token });
+            // Guardar el usuario y el token
+            await Promise.allSettled([user.save(), token.save()]);
+            res.status(201).json({ message: 'Se ha enviado un nuevo email de confirmación' });
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Error al crear la cuenta' });
         }
     }
 }

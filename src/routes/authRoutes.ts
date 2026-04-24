@@ -23,7 +23,7 @@ router.post('/create-account',
 
 
 // Confirmar cuenta
-router.get('/confirmar-cuenta',
+router.post('/confirm-account',
     body('token')
         .notEmpty().withMessage('El token es obligatorio'),
     handleInputErrors,
@@ -39,6 +39,12 @@ router.post('/login',
     handleInputErrors,
     AuthController.login
 );
-
+// Solicitar código de confirmación
+router.post('/request-code',
+    body('email')
+        .isEmail().withMessage('El email no es válido'),
+    handleInputErrors,
+    AuthController.requestConfirmationCode
+);
 
 export default router;
