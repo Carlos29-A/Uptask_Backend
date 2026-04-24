@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { ProjectController } from '../controllers/ProjectController';
-import { handleInputErrors, projectExists } from '../middleware';
+import { handleInputErrors, projectExists, taskBelongsToProject, taskExists } from '../middleware';
 import { TaskController } from '../controllers/TaskController';
-import { taskBelongsToProject, taskExists } from '../middleware/task';
 
 
 // definimos las rutas de los proyectos
@@ -47,9 +46,6 @@ router.delete('/:id',
     handleInputErrors,
     ProjectController.deleteProjectById
 );
-
-
-
 
 
 
@@ -110,6 +106,7 @@ router.post('/:projectId/tasks/:taskId/status',
     handleInputErrors,
     TaskController.updateTaskStatusById
 )
+
 
 
 // exportamos las rutas
