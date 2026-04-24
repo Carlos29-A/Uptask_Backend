@@ -120,4 +120,68 @@ export class AuthController {
             res.status(500).json({ message: 'Error al crear la cuenta' });
         }
     }
+    static forgotPassword = async (req: Request, res: Response) => {
+        try {
+
+            const { email } = req.body;
+
+            // Usuario existe
+            const user = await User.findOne({ email });
+            if (!user) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+            // Generar token
+            const token = new Token()
+            token.token = generateToken();
+            token.user = user._id;
+            await token.save();
+            // Enviar email de restablecimiento de contraseña
+            await AuthEmail.sendForgotPasswordEmail({ email, name: user.name, token: token.token });
+
+            res.status(201).json({ message: 'Se ha enviado un nuevo email de restablecimiento de contraseña' });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Error al crear la cuenta' });
+        }
+    }
+
+    static validateToken = async (req: Request, res: Response) => {
+        try {
+
+            const { token } = req.body;
+            const tokenExists = await Token.findOne({ token });
+            if (!tokenExists) {
+                return res.status(404).json({ message: 'Token no encontrado' });
+            }
+            return res.status(200).json({ message: 'Token válido, Define tu nueva contraseña' });
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Error al validar el token' });
+        }
+    }
+    static updatePassword = async (req: Request, res: Response) => {
+        try {
+
+            const { token } = req.params;
+            const { password, confirmPassword } = req.body;
+            const tokenExists = await Token.findOne({ token });
+            if (!tokenExists) {
+                return res.status(404).json({ message: 'Token no encontrado' });
+            }
+            const user = await User.findById(tokenExists.user);
+            if (!user) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+            user.password = await hashPassword(password);
+
+            await Promise.allSettled([user.save(), tokenExists.deleteOne()]);
+
+            return res.status(200).json({ message: 'Contraseña actualizada correctamente' });
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Error al actualizar la contraseña' });
+        }
+    }
 }
