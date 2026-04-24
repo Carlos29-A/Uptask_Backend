@@ -9,9 +9,10 @@ import { authenticate } from '../middleware/auth';
 // definimos las rutas de los proyectos
 const router = Router();
 
+// Proteger a todas las rutas de los proyectos
+router.use(authenticate);
 
 router.post('/',
-    authenticate,
     body('projectName')
         .notEmpty().withMessage('El nombre del proyecto es obligatorio'),
     body('clientName')

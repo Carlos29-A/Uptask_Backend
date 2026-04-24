@@ -7,6 +7,9 @@ export class ProjectController {
     static createProject = async (req: Request, res: Response) => {
         const project = new Project(req.body);
 
+        // Asignamos el manager al proyecto
+        project.manager = req.user._id;
+
         try {
             // Guardamos el proyecto en la base de datos
             await project.save();
@@ -22,7 +25,11 @@ export class ProjectController {
         try {
 
             // Buscamos todos los proyectos en la base de datos
-            const projects = await Project.find({});
+            const projects = await Project.find({
+                $or: [
+                    { manager: { $in: req.user._id } },
+                ]
+            });
 
             res.status(200).json(projects);
 
@@ -40,6 +47,10 @@ export class ProjectController {
 
             if (!project) {
                 return res.status(404).json({ message: 'Proyecto no encontrado' });
+            }
+            // Verificamos si el manager del proyecto es el usuario autenticado
+            if (project.manager.toString() !== req.user._id.toString()) {
+                return res.status(403).json({ message: 'No tienes permisos para acceder a este proyecto' });
             }
 
             res.status(200).json(project);
@@ -59,6 +70,10 @@ export class ProjectController {
             if (!project) {
                 return res.status(404).json({ message: 'Proyecto no encontrado' });
             }
+            // Verificamos si el manager del proyecto es el usuario autenticado
+            if (project.manager.toString() !== req.user._id.toString()) {
+                return res.status(403).json({ message: 'No tienes permisos para actualizar este proyecto' });
+            }
 
             res.status(200).json('Proyecto actualizado correctamente');
         } catch (error) {
@@ -74,6 +89,10 @@ export class ProjectController {
             const project = await Project.findByIdAndDelete(id);
             if (!project) {
                 return res.status(404).json({ message: 'Proyecto no encontrado' });
+            }
+            // Verificamos si el manager del proyecto es el usuario autenticado
+            if (project.manager.toString() !== req.user._id.toString()) {
+                return res.status(403).json({ message: 'No tienes permisos para eliminar este proyecto' });
             }
             res.status(200).json('Proyecto eliminado correctamente');
         } catch (error) {
