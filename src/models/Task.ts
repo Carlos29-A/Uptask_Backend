@@ -18,6 +18,7 @@ export type TaskType = Document & {
     description: string;
     project: Types.ObjectId;
     status: TaskStatus;
+    completeBy: Types.ObjectId;
 }
 
 // definimos el esquema de la tarea 
@@ -40,6 +41,11 @@ export const TaskSchema = new Schema<TaskType>({
         type: String,
         enum: Object.values(taskStatus),
         default: taskStatus.PENDING,
+    },
+    completeBy: {
+        type: Types.ObjectId,
+        ref: 'User',
+        default: null,
     }
 }, {
     timestamps: true,
