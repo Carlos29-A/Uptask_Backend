@@ -49,8 +49,11 @@ export class ProjectController {
             if (!project) {
                 return res.status(404).json({ message: 'Proyecto no encontrado' });
             }
-            // Verificamos si el manager del proyecto es el usuario autenticado
-            if (project.manager.toString() !== req.user._id.toString() && !req.project.team.includes(req.user._id)) {
+            // Permitimos acceso si es manager o miembro del equipo
+            const isManager = project.manager.toString() === req.user._id.toString();
+            const isTeamMember = project.team.some(member => member.toString() === req.user._id.toString());
+
+            if (!isManager && !isTeamMember) {
                 return res.status(403).json({ message: 'No tienes permisos para acceder a este proyecto' });
             }
 
