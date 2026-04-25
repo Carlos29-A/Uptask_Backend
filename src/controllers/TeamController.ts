@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import User from '../models/User';
+import Project from '../models/Project';
 
 
 export class TeamMemberController {
@@ -44,5 +45,12 @@ export class TeamMemberController {
         req.project.team = req.project.team.filter(teamMember => teamMember.toString() !== id);
         await req.project.save();
         res.json('Usuario eliminado del equipo correctamente');
+    }
+    static getTeamMembers = async (req: Request, res: Response) => {
+        const project = await Project.findById(req.params.projectId).populate({
+            path: 'team',
+            select: '_id name email',
+        });
+        res.json(project.team);
     }
 }

@@ -119,6 +119,11 @@ router.post('/:projectId/team/find',
     TeamMemberController.findMemberByEmail
 )
 
+// Ruta para obtener todos los miembros del equipo
+router.get('/:projectId/team',
+    TeamMemberController.getTeamMembers
+)
+
 // Ruta para agregar un miembro al equipo
 router.post('/:projectId/team',
     body('id')
