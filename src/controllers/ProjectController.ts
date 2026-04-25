@@ -27,7 +27,8 @@ export class ProjectController {
             // Buscamos todos los proyectos en la base de datos
             const projects = await Project.find({
                 $or: [
-                    { manager: { $in: req.user._id } },
+                    { manager: req.user._id },
+                    { team: req.user._id },
                 ]
             });
 
@@ -49,7 +50,7 @@ export class ProjectController {
                 return res.status(404).json({ message: 'Proyecto no encontrado' });
             }
             // Verificamos si el manager del proyecto es el usuario autenticado
-            if (project.manager.toString() !== req.user._id.toString()) {
+            if (project.manager.toString() !== req.user._id.toString() && !req.project.team.includes(req.user._id)) {
                 return res.status(403).json({ message: 'No tienes permisos para acceder a este proyecto' });
             }
 
