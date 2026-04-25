@@ -41,3 +41,16 @@ export const taskBelongsToProject = async (req: Request, res: Response, next: Ne
         res.status(500).json({ message: 'Error al verificar si la tarea pertenece al proyecto' });
     }
 }
+
+export const hasAuthorization = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (req.user._id.toString() !== req.project.manager.toString()) {
+            const error = new Error('No tienes permisos');
+            return res.status(403).json({ message: error.message });
+        }
+        next();
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error al verificar si la tarea pertenece al proyecto' });
+    }
+}

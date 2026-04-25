@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { ProjectController } from '../controllers/ProjectController';
-import { handleInputErrors, projectExists, taskBelongsToProject, taskExists } from '../middleware';
+import { handleInputErrors, hasAuthorization, projectExists, taskBelongsToProject, taskExists } from '../middleware';
 import { TaskController } from '../controllers/TaskController';
 import { authenticate } from '../middleware/auth';
 import { TeamMemberController } from '../controllers/TeamController';
@@ -56,7 +56,9 @@ router.delete('/:id',
 // rutas para las tareas
 // Middleware para verificar si el proyecto existe
 router.param('projectId', projectExists);
+
 router.post('/:projectId/tasks',
+    hasAuthorization,
     body('name')
         .notEmpty().withMessage('El nombre de la tarea es obligatorio'),
     body('description')
@@ -83,6 +85,7 @@ router.get('/:projectId/tasks/:taskId',
 
 // Actualizar una tarea por su ID
 router.put('/:projectId/tasks/:taskId',
+    hasAuthorization,
     param('taskId')
         .isMongoId().withMessage('El ID de la tarea no es válido'),
     body('name')
@@ -95,6 +98,7 @@ router.put('/:projectId/tasks/:taskId',
 
 // Eliminar una tarea por su ID
 router.delete('/:projectId/tasks/:taskId',
+    hasAuthorization,
     param('taskId')
         .isMongoId().withMessage('El ID de la tarea no es válido'),
     handleInputErrors,
