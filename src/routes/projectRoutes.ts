@@ -4,6 +4,7 @@ import { ProjectController } from '../controllers/ProjectController';
 import { handleInputErrors, projectExists, taskBelongsToProject, taskExists } from '../middleware';
 import { TaskController } from '../controllers/TaskController';
 import { authenticate } from '../middleware/auth';
+import { TeamMemberController } from '../controllers/TeamController';
 
 
 // definimos las rutas de los proyectos
@@ -110,7 +111,28 @@ router.post('/:projectId/tasks/:taskId/status',
     TaskController.updateTaskStatusById
 )
 
+/** Routes for teams */
+router.post('/:projectId/team/find',
+    body('email')
+        .isEmail().withMessage('El email no es válido'),
+    handleInputErrors,
+    TeamMemberController.findMemberByEmail
+)
 
+// Ruta para agregar un miembro al equipo
+router.post('/:projectId/team',
+    body('id')
+        .isMongoId().withMessage('El ID del usuario no es válido'),
+    handleInputErrors,
+    TeamMemberController.addTeamMemberById
+)
 
+// Ruta para eliminar un miembro del equipo
+router.delete('/:projectId/team',
+    body('id')
+        .isMongoId().withMessage('El ID del usuario no es válido'),
+    handleInputErrors,
+    TeamMemberController.removeTeamMemberById
+)
 // exportamos las rutas
 export default router;

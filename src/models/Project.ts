@@ -10,6 +10,7 @@ export type ProjectType = Document & {
     description: string;
     tasks: PopulatedDoc<TaskType & Document>[];
     manager: PopulatedDoc<IUser & Document>;
+    team: PopulatedDoc<IUser & Document>[];
 }
 
 // de mongo schema, es el esquema de la base de datos
@@ -36,7 +37,11 @@ const ProjectSchema = new Schema<ProjectType>({
     manager: {
         type: Types.ObjectId,
         ref: 'User',
-    }
+    },
+    team: [{
+        type: Types.ObjectId,
+        ref: 'User',
+    }]
 }, {
     timestamps: true,
 })
