@@ -17,8 +17,7 @@ export class TeamMemberController {
         res.json(user);
     }
     static addTeamMemberById = async (req: Request, res: Response) => {
-        const { id } = req.params;
-
+        const { id } = req.body;
         // Find User
         const user = await User.findById(id).select('_id');
         if (!user) {
@@ -31,20 +30,20 @@ export class TeamMemberController {
         // Guardar el usuario en el equipo
         req.project.team.push(user._id);
         await req.project.save();
-        res.json('Usuario agregado al equipo correctamente');
+        res.status(200).json({ message: 'Usuario agregado al equipo correctamente' });
 
     }
     static removeTeamMemberById = async (req: Request, res: Response) => {
-        const { id } = req.body;
+        const { userId } = req.params;
 
         // Verificar si el usuario ya está en el equipo
-        if (!req.project.team.some(teamMember => teamMember.toString() === id)) {
+        if (!req.project.team.some(teamMember => teamMember.toString() === userId.toString())) {
             return res.status(400).json({ message: 'Usuario no está en el equipo' });
         }
 
-        req.project.team = req.project.team.filter(teamMember => teamMember.toString() !== id);
+        req.project.team = req.project.team.filter(teamMember => teamMember.toString() !== userId.toString());
         await req.project.save();
-        res.json('Usuario eliminado del equipo correctamente');
+        res.status(200).json({ message: 'Usuario eliminado del equipo correctamente' });
     }
     static getTeamMembers = async (req: Request, res: Response) => {
         const project = await Project.findById(req.params.projectId).populate({

@@ -133,8 +133,8 @@ router.post('/:projectId/team',
 )
 
 // Ruta para eliminar un miembro del equipo
-router.delete('/:projectId/team',
-    body('id')
+router.delete('/:projectId/team/:userId',
+    param('userId')
         .isMongoId().withMessage('El ID del usuario no es válido'),
     handleInputErrors,
     TeamMemberController.removeTeamMemberById
