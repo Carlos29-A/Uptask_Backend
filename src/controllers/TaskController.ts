@@ -34,8 +34,7 @@ export class TaskController {
     // Obtener una tarea por su ID
     static getTaskById = async (req: Request, res: Response) => {
         try {
-
-            const task = (await Task.findById(req.task._id)).populate({ path: 'completeBy', select: 'id name email' });
+            const task = await req.task.populate({ path: 'completeBy.user', select: 'id name email' });
             res.status(200).json(task);
 
         } catch (error) {
@@ -78,11 +77,11 @@ export class TaskController {
         try {
             const { status } = req.body;
             req.task.status = status;
-            if (status === 'pending') {
-                req.task.completeBy = null;
-            } else {
-                req.task.completeBy = req.user._id;
+            const data = {
+                user: req.user._id,
+                status: status,
             }
+            req.task.completeBy.push(data);
             await req.task.save();
             res.status(200).send('Estado de la tarea actualizado correctamente');
 
