@@ -79,4 +79,27 @@ router.get('/user',
     authenticate,
     AuthController.user
 )
+
+/*Profile */
+router.put('/profile',
+    authenticate,
+    body('name')
+        .notEmpty().withMessage('El nombre es obligatorio'),
+    body('email')
+        .isEmail().withMessage('El email no es válido'),
+    handleInputErrors,
+    AuthController.updateProfile
+)
+router.post('/update-password',
+    authenticate,
+    body('currentPassword')
+        .notEmpty().withMessage('La contraseña actual es obligatoria'),
+    body('password')
+        .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
+    body('confirmPassword')
+        .custom((value, { req }) => value === req.body.password).withMessage('Las contraseñas no coinciden'),
+    handleInputErrors,
+    AuthController.updateCurrentUserPassword
+)
+
 export default router;
