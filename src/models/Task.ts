@@ -22,6 +22,7 @@ export type TaskType = Document & {
         user: Types.ObjectId;
         status: TaskStatus;
     }[];
+    notes: Types.ObjectId[];
 }
 
 // definimos el esquema de la tarea 
@@ -57,6 +58,12 @@ export const TaskSchema = new Schema<TaskType>({
                 enum: Object.values(taskStatus),
                 default: taskStatus.PENDING,
             }
+        }
+    ],
+    notes: [
+        {
+            type: Types.ObjectId,
+            ref: 'Note',
         }
     ]
 }, {

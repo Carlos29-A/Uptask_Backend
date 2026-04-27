@@ -5,6 +5,7 @@ import { handleInputErrors, hasAuthorization, projectExists, taskBelongsToProjec
 import { TaskController } from '../controllers/TaskController';
 import { authenticate } from '../middleware/auth';
 import { TeamMemberController } from '../controllers/TeamController';
+import { NoteController } from '../controllers/NoteController';
 
 
 // definimos las rutas de los proyectos
@@ -143,5 +144,32 @@ router.delete('/:projectId/team/:userId',
     handleInputErrors,
     TeamMemberController.removeTeamMemberById
 )
+
+
+
+
+/** Routes for notes */
+router.post('/:projecId/tasks/:taskId/notes',
+    body('content')
+        .notEmpty().withMessage('El contenido de la nota es obligatorio'),
+    handleInputErrors,
+    NoteController.createNote
+)
+
+// Ruta para obtener todas las notas de una tarea
+router.get('/:projectId/tasks/:taskId/notes',
+    NoteController.getAllNotes
+)
+
+// Eliminar una nota por su ID
+router.delete('/:projectId/tasks/:taskId/notes/:noteId',
+    param('noteId')
+        .isMongoId().withMessage('El ID de la nota no es válido'),
+    handleInputErrors,
+    NoteController.deleteNoteById
+)
+
+
+
 // exportamos las rutas
 export default router;

@@ -34,7 +34,14 @@ export class TaskController {
     // Obtener una tarea por su ID
     static getTaskById = async (req: Request, res: Response) => {
         try {
-            const task = await req.task.populate({ path: 'completeBy.user', select: 'id name email' });
+            const task = await req.task.populate([
+                { path: 'completeBy.user', select: '_id name email' },
+                {
+                    path: 'notes', populate: {
+                        path: 'createdBy', select: '_id name email'
+                    }
+                }
+            ]);
             res.status(200).json(task);
 
         } catch (error) {
