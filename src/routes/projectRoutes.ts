@@ -149,7 +149,7 @@ router.delete('/:projectId/team/:userId',
 
 
 /** Routes for notes */
-router.post('/:projecId/tasks/:taskId/notes',
+router.post('/:projectId/tasks/:taskId/notes',
     body('content')
         .notEmpty().withMessage('El contenido de la nota es obligatorio'),
     handleInputErrors,
