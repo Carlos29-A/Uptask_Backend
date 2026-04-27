@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, PopulatedDoc, Types } from 'mongoose';
-import { TaskType } from './Task';
+import Task, { TaskType } from './Task';
 import { IUser } from './User';
+import Note from './Note';
 
 
 // para que typescript sepa que tipo de datos es el proyecto
@@ -44,6 +45,18 @@ const ProjectSchema = new Schema<ProjectType>({
     }]
 }, {
     timestamps: true,
+})
+
+// Middleware
+ProjectSchema.pre('deleteOne', { document: true, query: false }, async function () {
+    const projectId = this._id;
+    if (!projectId) return;
+
+    const tasks = await Task.find({ project: projectId });
+    for (const task of tasks) {
+        await Note.deleteMany({ task: task._id });
+    }
+    await Task.deleteMany({ project: projectId });
 })
 
 // definimos el modelo de proyecto, que se va a guardar en la base de datos

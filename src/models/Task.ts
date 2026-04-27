@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
+import Note from './Note';
 
 
 
@@ -68,6 +69,13 @@ export const TaskSchema = new Schema<TaskType>({
     ]
 }, {
     timestamps: true,
+})
+
+// Middleware
+TaskSchema.pre('deleteOne', { document: true, query: false }, async function () {
+    const taskId = this._id;
+    if (!taskId) return;
+    await Note.deleteMany({ task: taskId });
 })
 
 // definimos el modelo de tarea, que se va a guardar en la base de datos

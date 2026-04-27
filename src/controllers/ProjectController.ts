@@ -65,20 +65,11 @@ export class ProjectController {
     }
     // Actualizar un proyecto por su ID
     static updateProjectById = async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const { projectName, clientName, description } = req.body;
         try {
-            // Buscamos el proyecto por su ID en la base de datos
-            const project = await Project.findByIdAndUpdate(id, { projectName, clientName, description }, { new: true });
-
-            if (!project) {
-                return res.status(404).json({ message: 'Proyecto no encontrado' });
-            }
-            // Verificamos si el manager del proyecto es el usuario autenticado
-            if (project.manager.toString() !== req.user._id.toString()) {
-                return res.status(403).json({ message: 'No tienes permisos para actualizar este proyecto' });
-            }
-
+            req.project.projectName = req.body.projectName;
+            req.project.clientName = req.body.clientName;
+            req.project.description = req.body.description;
+            await req.project.save();
             res.status(200).json('Proyecto actualizado correctamente');
         } catch (error) {
             console.log(error);
@@ -87,17 +78,9 @@ export class ProjectController {
     }
     // Eliminar un proyecto por su ID
     static deleteProjectById = async (req: Request, res: Response) => {
-        const { id } = req.params;
+
         try {
-            // Buscamos el proyecto por su ID en la base de datos
-            const project = await Project.findByIdAndDelete(id);
-            if (!project) {
-                return res.status(404).json({ message: 'Proyecto no encontrado' });
-            }
-            // Verificamos si el manager del proyecto es el usuario autenticado
-            if (project.manager.toString() !== req.user._id.toString()) {
-                return res.status(403).json({ message: 'No tienes permisos para eliminar este proyecto' });
-            }
+            await req.project.deleteOne();
             res.status(200).json('Proyecto eliminado correctamente');
         } catch (error) {
             console.log(error);
